@@ -312,6 +312,26 @@ Sample code:
     plt.grid(True) # Add a grid to the plot
     plt.show() # Display the generated plot
 
+    # -----------------------------------------------------
+    # 5. Box Plot: Electricity Consumption by Region
+    # -----------------------------------------------------
+    # Create a figure for the box plot
+    plt.figure(figsize=(10, 6))
+
+    # Create box plot comparing electricity consumption across regions
+    df.boxplot(
+        column='Consumption_kWh',  # Data to plot
+        by='Region'                # Group data by region
+    )
+
+    plt.xlabel('Region')  # X-axis label
+    plt.ylabel('Electricity Consumption (kWh)')  # Y-axis label
+    plt.title('Electricity Consumption Distribution by Region')  # Plot title
+    plt.suptitle('')  # Remove default pandas subtitle
+    plt.grid(True)  # Add grid for readability
+    plt.show()  # Display the plot
+
+
 **Output:**
 
 <img width="850" height="547" alt="image" src="https://github.com/user-attachments/assets/fd2769b4-33b8-4a28-9c55-65301d78dd6e" />
@@ -323,6 +343,9 @@ Sample code:
 <img width="850" height="547" alt="image" src="https://github.com/user-attachments/assets/9f0905d7-295d-487d-8791-7c92a61293a2" />
 
 <img width="850" height="547" alt="image" src="https://github.com/user-attachments/assets/376dd786-dc9a-4ae4-8e7f-d0fdb225a692" />
+
+<img width="587" height="445" alt="image" src="https://github.com/user-attachments/assets/c6b4be58-0f75-483e-b960-3bdb2378f8bd" />
+
 
 
 # Task 4: Predictive Analysis
