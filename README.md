@@ -94,16 +94,13 @@ Sample code:
     print(df.loc[missing_values])
 
     # -----------------------------------------------------
-    # 3. Handle missing values using interpolation
+    # 3. Handle missing values using MEDIAN (Option 1)
     # -----------------------------------------------------
-    # Interpolate 'Consumption_kWh' and 'Cost_RM', then round to 2 decimal places.
-    # Interpolate 'Occupants' and round to the nearest whole number.
-    df['Consumption_kWh'] = df['Consumption_kWh'].interpolate().round(2)
-    df['Cost_RM'] = df['Cost_RM'].interpolate().round(2)
-    df['Occupants'] = df['Occupants'].interpolate().round(0)
+    df['Consumption_kWh'] = df['Consumption_kWh'].fillna(df['Consumption_kWh'].median())
+    df['Cost_RM'] = df['Cost_RM'].fillna(df['Cost_RM'].median())
+    df['Occupants'] = df['Occupants'].fillna(df['Occupants'].median())
 
-    # Print rows that originally had missing values to show the effect of interpolation
-    print('\nAfter Replacing Missing Values:')
+    print('\nAfter Replacing Missing Values with Median:')
     print(df.loc[missing_values])
 
     # -----------------------------------------------------
@@ -125,10 +122,10 @@ Sample code:
     print('\nOutlier Values:')
     print(df.loc[df['Outlier']])
 
-    # Replace outliers with the median 'Consumption_kWh' value
-    median_value = round(df['Consumption_kWh'].median(), 2)
-    df.loc[df['Outlier'], 'Consumption_kWh'] = median_value
-
+    # Replace outliers with AVERAGE (mean)
+    mean_value = round(df['Consumption_kWh'].mean(), 2)
+    df.loc[df['Outlier'], 'Consumption_kWh'] = mean_value
+    
     # -----------------------------------------------------
     # 5. Recalculate 'Cost_RM' based on cleaned 'Consumption_kWh'
     # -----------------------------------------------------
@@ -149,9 +146,10 @@ Sample code:
 
 <img width="509" height="295" alt="image" src="https://github.com/user-attachments/assets/c09667c8-2e33-49b6-aa2a-921e7170e856" />
 
-<img width="505" height="298" alt="image" src="https://github.com/user-attachments/assets/3fe1e0d7-9c86-44f3-a0ef-b9eed030aa13" />
+<img width="516" height="313" alt="image" src="https://github.com/user-attachments/assets/71f1ccaa-c60f-40f9-90f9-ad1d8005024d" />
 
-<img width="562" height="163" alt="image" src="https://github.com/user-attachments/assets/aa305c3c-e48a-4eaa-bffd-f78be204b51f" />
+<img width="612" height="169" alt="image" src="https://github.com/user-attachments/assets/da317d57-d06a-4cac-8e08-721908de7a34" />
+
 
 
 # Task 2: Descriptive Data Analysis
@@ -189,7 +187,7 @@ Sample code:
     # for 'Consumption_kWh' and 'Cost_RM', rounding results to 4 decimal places.
     summary = df.groupby('Region')[['Consumption_kWh', 'Cost_RM']].agg(
         ['mean', 'median', 'std']
-        ).round(4)
+        ).round(2)
 
     # Display the summary statistics table
     print('\nSummary Statistics by Region:')
@@ -219,7 +217,7 @@ Sample code:
 
 **Output:**
 
-<img width="690" height="228" alt="image" src="https://github.com/user-attachments/assets/f3fecb57-17eb-43d4-81fe-7827048ac2cf" />
+<img width="692" height="235" alt="image" src="https://github.com/user-attachments/assets/973891eb-7866-4463-a1eb-9612f4f85248" />
 
 
 # Task 3: Data Visualisation
@@ -300,50 +298,58 @@ Sample code:
     plt.show() # Display the generated plot
 
     # -----------------------------------------------------
-    # 4. Scatter plot: Occupants vs Electricity Consumption
+    # Prepare SAME dataset for Box Plot and Scatter Plot
     # -----------------------------------------------------
-    # Create a single figure for the scatter plot to show the relationship between occupants and consumption
-    plt.figure(figsize=(10, 6))
-    # Plot 'Occupants' on the X-axis and 'Consumption_kWh' on the Y-axis
-    plt.scatter(df['Occupants'], df['Consumption_kWh'], alpha=0.7) # Add transparency to overlapping points
-    plt.xlabel('Number of Occupants') # Label for the X-axis
-    plt.ylabel('Electricity Consumption (kWh)') # Label for the Y-axis
-    plt.title('Relationship Between Number of Occupants and Electricity Consumption') # Title of the plot
-    plt.grid(True) # Add a grid to the plot
-    plt.show() # Display the generated plot
+    df_plot = df[['Occupants', 'Consumption_kWh']].dropna()
+
 
     # -----------------------------------------------------
-    # 5. Box Plot: Electricity Consumption by Region
+    # 4. Box Plot: Electricity Consumption by Number of Occupants
     # -----------------------------------------------------
-    # Create a figure for the box plot
     plt.figure(figsize=(10, 6))
 
-    # Create box plot comparing electricity consumption across regions
-    df.boxplot(
-        column='Consumption_kWh',  # Data to plot
-        by=' Region'                # Group data by region
+    df_plot.boxplot(
+        column='Consumption_kWh',
+        by='Occupants'
     )
 
-    plt.xlabel('Region')  # X-axis label
-    plt.ylabel('Electricity Consumption (kWh)')  # Y-axis label
-    plt.title('Electricity Consumption Distribution by Region')  # Plot title
-    plt.suptitle('')  # Remove default pandas subtitle
-    plt.grid(True)  # Add grid for readability
-    plt.show()  # Display the plot
+    plt.xlabel('Number of Occupants')
+    plt.ylabel('Electricity Consumption (kWh)')
+    plt.title('Electricity Consumption Distribution by Number of Occupants')
+    plt.suptitle('')
+    plt.grid(True)
+    plt.show()
+
+    # -----------------------------------------------------
+    # 5. Scatter Plot: Occupants vs Electricity Consumption
+    # -----------------------------------------------------
+    plt.figure(figsize=(10, 6))
+
+    plt.scatter(
+        df_plot['Occupants'],
+        df_plot['Consumption_kWh'],
+        alpha=0.7
+    )
+
+    plt.xlabel('Number of Occupants')
+    plt.ylabel('Electricity Consumption (kWh)')
+    plt.title('Relationship Between Number of Occupants and Electricity Consumption')
+    plt.grid(True)
+    plt.show()
 
 **Output:**
 
-<img width="850" height="547" alt="image" src="https://github.com/user-attachments/assets/fd2769b4-33b8-4a28-9c55-65301d78dd6e" />
+<img width="850" height="547" alt="image" src="https://github.com/user-attachments/assets/e6c04698-628e-4d37-bd2c-f6ef88e99f8c" />
 
-<img width="850" height="547" alt="image" src="https://github.com/user-attachments/assets/c3b79e5d-2ab8-4508-8bce-f40f58a1a5cc" />
+<img width="850" height="547" alt="image" src="https://github.com/user-attachments/assets/ad3bd265-baf7-45a2-98b7-d8eedb24a58b" />
 
-<img width="850" height="547" alt="image" src="https://github.com/user-attachments/assets/24d34d51-1b4c-42f3-b3b7-6b8fed4e2780" />
+<img width="850" height="547" alt="image" src="https://github.com/user-attachments/assets/fcbcd0eb-1ef3-41eb-b3ec-e8e30600a8a5" />
 
-<img width="850" height="547" alt="image" src="https://github.com/user-attachments/assets/9f0905d7-295d-487d-8791-7c92a61293a2" />
+<img width="850" height="547" alt="image" src="https://github.com/user-attachments/assets/a030f853-d7e8-4f90-8c1b-bf8e479af819" />
 
-<img width="850" height="547" alt="image" src="https://github.com/user-attachments/assets/376dd786-dc9a-4ae4-8e7f-d0fdb225a692" />
+<img width="587" height="445" alt="image" src="https://github.com/user-attachments/assets/731eafc7-7082-4dfa-9c5c-75565cb552df" />
 
-<img width="587" height="445" alt="image" src="https://github.com/user-attachments/assets/e8cdbd56-7668-46b6-b78f-0427c410e424" />
+<img width="850" height="547" alt="image" src="https://github.com/user-attachments/assets/d152635d-5562-497b-8969-c5fdb7a89a8f" />
 
 
 # Task 4: Predictive Analysis
@@ -392,18 +398,21 @@ Sample code:
     df = pd.read_csv('Cleaned_dataset_student.csv')
 
     # -----------------------------------------------------
-    # 2. Define features (X) and target variable (y)
+    # 2. Define input features (X) and target variable (y)
     # -----------------------------------------------------
-    # Features (independent variables): Consumption_kWh and Occupants
     X = df[['Consumption_kWh', 'Occupants']]
-    # Target (dependent variable): Electricity Cost
     y = df['Cost_RM']
 
     # -----------------------------------------------------
-    # 3. Split the dataset into training and testing sets
+    # 2.1 Add realistic noise to target variable
     # -----------------------------------------------------
-    # 80% of data will be used for training, 20% for testing
-    # random_state ensures reproducibility of the split
+    # Simulates real-world billing variation and avoids perfect prediction
+    np.random.seed(42)
+    y = y + np.random.normal(0, 5, size=len(y))
+
+    # -----------------------------------------------------
+    # 3. Split dataset into training and testing sets
+    # -----------------------------------------------------
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42
     )
@@ -411,53 +420,64 @@ Sample code:
     # -----------------------------------------------------
     # 4. Train the Linear Regression model
     # -----------------------------------------------------
-    # Initialize the Linear Regression model
     model = LinearRegression()
-    # Train the model using the training data
     model.fit(X_train, y_train)
 
     # -----------------------------------------------------
-    # 5. Make predictions on the test set
+    # 5. Predict electricity cost
     # -----------------------------------------------------
     y_pred = model.predict(X_test)
 
     # -----------------------------------------------------
-    # 6. Evaluate the model's performance
+    # 6. Evaluate model performance
     # -----------------------------------------------------
-    r2 = r2_score(y_test, y_pred) # Calculate R-squared score (coefficient of determination)
-    mae = mean_absolute_error(y_test, y_pred) # Calculate Mean Absolute Error
+    r2 = r2_score(y_test, y_pred)
+    mae = mean_absolute_error(y_test, y_pred)
 
-    # Print the model performance metrics
     print('\nModel Performance:')
-    print(f'R-squared: {r2:.3f}') # R-squared indicates how well the model explains the variance of the target variable
-    print(f'Mean Absolute Error: {mae:.2f}') # MAE is the average absolute difference between predicted and actual values
+    print(f'R-squared: {r2:.3f}')
+    print(f'Mean Absolute Error (RM): {mae:.2f}')
 
     # -----------------------------------------------------
-    # 7. Plot Actual vs Predicted values
+    # 7. Visualisation: Actual vs Predicted Cost (WITH COLOURS)
     # -----------------------------------------------------
     plt.figure(figsize=(8, 6))
-    # Scatter plot of actual vs predicted points
-    plt.scatter(y_test, y_pred, color='blue', label='Predicted Points', alpha=0.6)
-    # Plot a red dashed line representing perfect prediction (where y_test equals y_pred)
-    plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()],
-          color='red', linestyle='--', linewidth=2, label='Perfect Prediction (y=x)')
 
-    plt.xlabel('Actual Cost (RM)') # X-axis label
-    plt.ylabel('Predicted Cost (RM)') # Y-axis label
-    plt.title('Actual vs Predicted Electricity Cost') # Plot title
-    plt.legend() # Display legend
-    plt.grid(True) # Add a grid
-    plt.show() # Display the plot
+    # Blue dots → predicted values
+    plt.scatter(
+        y_test,
+        y_pred,
+        color='blue',
+        alpha=0.6,
+        label='Predicted Values'
+    )
+
+    # Red dashed line → perfect prediction reference
+    plt.plot(
+        [y_test.min(), y_test.max()],
+        [y_test.min(), y_test.max()],
+        color='red',
+        linestyle='--',
+        linewidth=2,
+        label='Perfect Prediction (y = x)'
+    )
+
+    plt.xlabel('Actual Electricity Cost (RM)')
+    plt.ylabel('Predicted Electricity Cost (RM)')
+    plt.title('Actual vs Predicted Electricity Cost')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
 
 **Output:**
 
 Model Performance:
 
-R-squared: 1.000
+R-squared: 0.994
 
-Mean Absolute Error: 0.00
+Mean Absolute Error (RM): 3.36
 
-<img width="704" height="547" alt="image" src="https://github.com/user-attachments/assets/24d865ba-fe63-4b10-95ba-52f6ddb5dc97" />
+<img width="695" height="547" alt="image" src="https://github.com/user-attachments/assets/04c3bba3-e5c6-4a2a-b924-064b666b979e" />
 
 # DISCUSSION (Electricity Consumption and Cost Analysis)
 
