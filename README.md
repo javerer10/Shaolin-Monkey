@@ -497,9 +497,11 @@ The hierarchy of regional consumption was verified by visualizations whereby Urb
 
 **Task 4: Predictive Analysis**
 
-Linear Regression model that was created to predict Cost_RM produced superior results. The model was quite accurate as the R-squared was 1.000 and the Mean Absolute Error was 0.00 RM with the help of consumption and occupant data to predict the cost of electricity.
+A linear regression model was created to predict household electricity cost (Cost_RM) using electricity consumption (Consumption_kWh) and the number of people in the house. The model worked very well, with an R-squared of 0.994, meaning it can explain 99.4% of the changes in electricity cost.
 
-General finding: The discussion reveals that there are notable regional differences and seasonal factors on the consumption of electricity. The unexpected negative correlation with the occupants is an indication of complicated behavioral or efficiency variables. The forecasting model was nearly accurate which means that once consumption is known the costs associated with the same could be forecasted with high level of confidence.
+The Mean Absolute Error (MAE) was 3.36 RM, showing that the predicted costs are very close to the actual costs. A scatter plot of actual versus predicted costs also shows most points are near the ideal line, confirming the model’s accuracy.
+
+The results show that electricity use is the main factor affecting cost, while the number of occupants has a smaller effect. Small differences can still happen due to user habits, appliance efficiency, or electricity rates, but overall, the model predicts costs reliably.
 
 **Colab Code Link:**
 
